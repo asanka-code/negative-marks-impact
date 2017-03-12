@@ -43,7 +43,7 @@ def getAbsentPaneltyMarkRandom():
 def getAbsentPaneltyMark(presentCount):
     total_panalty = presentCount - 60
     total_panalty*=-1
-    print("Total panalty: %d", total_panalty)
+    #print("Total panalty: %d", total_panalty)
     return total_panalty
 
 # final mark calculation

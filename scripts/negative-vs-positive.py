@@ -3,97 +3,60 @@ import numpy
 import matplotlib
 import matplotlib.pyplot as plt
 import pylab
-
-#------------------------------------------------------------------------------
-# Simulation settings
-# ===================
-
-# probability for a student to be present
-attendance_probability = 0.99
-
-# number of samples for the simulation
-num_samples = 1000
-#------------------------------------------------------------------------------
+import manju
+import others
+import settings
 
 # embedding fonts in the generated pdf graphs
 matplotlib.rcParams['ps.useafm'] = True
 matplotlib.rcParams['pdf.use14corefonts'] = True
 matplotlib.rcParams['text.usetex'] = True
 
-# marks for the seminar presentation
-def getSeminarPresMark():
-    mark = random.randint(0,25)
-    return mark
 
-# marks for the book chapter presentation
-def getBookChapterPresMark():
-    mark = random.randint(0,25)
-    return mark
+#------------------------------------------------------------------------------
+# Case 1: For students who get full marks on every other component, what is the
+# variation of marks for diffeent number of absent days to sessions?
 
-# marks for the single page review
-def getSinglePageReviewMark():
-    mark = random.randint(0,30)
-    return mark
-
-# marks for the active participation
-def getActiveParticipationMark():
-    mark = random.randint(0,10)
-    return mark
-
-# marks for the highlighting and questioning
-def getHighlightQuestionMark():
-    mark = random.randint(0,10)
-    return mark
-
-# panelty marks for being absent
-def getAbsentPaneltyMark():
-    total_panalty = 0
-    x = 0
-    while x < 60:
-        panelty = numpy.random.choice([0,1], p=[attendance_probability, 1-attendance_probability])
-        total_panalty = total_panalty + panelty
-        x+=1
-
-    #print("Total panalty: %d", total_panalty)
-    return total_panalty
-
-
-
-#-------------------------------------------------------------------------------------------
-# Now, just to test our possibilities for marks, let's roll the dice for "num_samples" times.
-mark_list = list()
-result = 0
-x = 0
-while x < num_samples:
-    result = getSeminarPresMark() + getBookChapterPresMark() + getSinglePageReviewMark() + getActiveParticipationMark() + getHighlightQuestionMark() - getAbsentPaneltyMark()
-
-    # we don't give negative final marks
-    if result < 0:
-        result = 0
-        #print(0)
-
-    mark_list.append(result)
-    #print(result)
-    x+=1
-
-
-# Now, just to test our possibilities for marks, let's roll the dice for "num_samples" times.
+mark_list1 = list()
 mark_list2 = list()
-result = 0
-x = 0
-while x < num_samples:
-    result = getSeminarPresMark() + getBookChapterPresMark() + getSinglePageReviewMark() + getActiveParticipationMark() + getHighlightQuestionMark() - getAbsentPaneltyMark()
+session = 60
+while session > 2:
+    mark1 = manju.getFinalMark(25,25,30,10,10,session)
+    mark_list1.append(numpy.int(mark1))
 
-    # we don't give negative final marks
-    if result < 0:
-        result = 0
-        #print(0)
+    mark2 = others.getFinalMark(20,20,20,10,10,session)
+    mark_list2.append(numpy.int(mark2))
 
-    mark_list2.append(result)
-    #print(result)
-    x+=1
+    session-=1
+
+mark_list1 = numpy.array(mark_list1)
+mark_list2 = numpy.array(mark_list2)
+x_values = numpy.arange(60, 2, -1)
+
+print("mark_list1=%d", mark_list1)
+print("mark_list2=%d", mark_list2)
+print "x_values = ", x_values
+
+pylab.figure(num=None, figsize=(10, 6))
+#pylab.subplot(211)
+pylab.title('Impact of the negative marks')
+pylab.xlabel('number of present days')
+pylab.ylabel('total mark')
+pylab.grid(True)
+line_manju = pylab.plot(x_values, mark_list1, label='with negative panalties')
+line_others = pylab.plot(x_values, mark_list2, label='no negative panalties')
+pylab.legend(loc='lower right')
+
+#pylab.xlim(0, max(time_sec)
+pylab.savefig('number-of-present-days-vs-total-mark.pdf')
+#pylab.show()
+#------------------------------------------------------------------------------
 
 
+
+
+
+'''
 #------------------------------------------------------------------------------
 # plotting data
 
@@ -129,23 +92,6 @@ pylab.ylabel('number of students')
 pylab.grid(True)
 #pylab.show()
 pylab.savefig('negative-vs-positive.pdf')
-
-
-
-
-'''
-x_values = numpy.linspace(0, num_samples)
-y_values = numpy.linspace(0, num_samples)
-
-pylab.figure(num=None, figsize=(10, 6))
-#pylab.subplot(211)
-pylab.title('Impact of the negative marks')
-pylab.xlabel('mark')
-pylab.ylabel('number of students')
-pylab.plot(x_values, y_values)
-#pylab.xlim(0, max(time_sec)
-#pylab.savefig('graph.pdf')
-pylab.show()
 '''
 
 
